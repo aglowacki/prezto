@@ -157,6 +157,14 @@ function pmodload {
   done
 }
 
+function y() {
+	local tmp cwd; tmp="$(mktemp -t "yazi-cwd.XXXXXX")"
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd" || builtin true
+	command rm -f -- "$tmp"
+}
+
 #
 # Prezto Initialization
 #
@@ -195,3 +203,10 @@ unset zfunction{s,}
 zstyle -a ':prezto:load' pmodule 'pmodules'
 pmodload "$pmodules[@]"
 unset pmodules
+
+. "$HOME/.zprezto/fzf.zsh"
+. "$HOME/.cargo/env"
+source $HOME/.local/bin/env
+
+alias vi=nvim
+
